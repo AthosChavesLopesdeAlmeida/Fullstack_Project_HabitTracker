@@ -20,33 +20,61 @@ O banco está no neon.tech
 
 ## Estrutura do projeto
 
-Fullstack_Project_HabitTracker/          ← raiz do monorepo
+
+Em uma pasta root, ficam /web (subpasta para o frontend) e /api (subpasta para o backend de express e prisma). Nesta mesma pasta fica /packages (tipos e schemas comuns).
+
+Já sobre a modelagem do banco de dados, ela fica assim:
+
+- Um usuário que tem nome, email e senha para autenticação e um ou mais hábitos registrados
+
+- Hábitos que tem nome, data de criação e relação com o usuário, além de uma série de "logs", que vão ser os registros que realmente marcam a frequência do usuário naquele hábito
+
+- Um log, com data, booleano de "completado" e relação com determinado hábito. Vai ser @@unique para não duplicar o log
+
+
+Sugestão de estrutura do Claude:
+
+Fullstack_Project_HabitTracker/          ← raiz do monorepo (repo git)
 ├── apps/
-│   ├── web/                             ← sua pasta habit_tracker atual, sem mudanças internas
+│   ├── habit_tracker/                   ← sua pasta atual, sem alterações internas
 │   │   ├── .next/
+│   │   ├── node_modules/
 │   │   ├── public/
-│   │   ├── src/app/
+│   │   ├── src/
+│   │   │   └── app/
+│   │   ├── .gitignore
+│   │   ├── eslint.config.mjs
+│   │   ├── next-env.d.ts
 │   │   ├── next.config.ts
-│   │   └── package.json
+│   │   ├── package.json
+│   │   ├── package-lock.json
+│   │   ├── postcss.config.mjs
+│   │   ├── tsconfig.json
+│   │   └── README.md
 │   │
-│   └── api/                             ← novo, Express
+│   └── habit_tracker_api/               ← novo, Express
 │       ├── src/
 │       │   ├── routes/
 │       │   ├── controllers/
 │       │   ├── services/
 │       │   ├── repositories/
 │       │   ├── middlewares/
-│       │   └── lib/prisma.ts
+│       │   ├── lib/
+│       │   │   └── prisma.ts
 │       │   └── server.ts
 │       ├── prisma/
 │       │   ├── schema.prisma
 │       │   └── migrations/
-│       └── package.json
+│       ├── package.json
+│       └── tsconfig.json
 │
 ├── packages/
-│   └── shared/                          ← novo, tipos/schemas comuns
-│       ├── src/types/
+│   └── shared/                          ← tipos e schemas compartilhados
+│       ├── src/
+│       │   └── types/
 │       └── package.json
 │
-├── package.json                         ← novo, root com workspaces
-└── tsconfig.base.json
+├── package.json                         ← root, com workspaces
+├── tsconfig.base.json
+├── LICENSE
+└── README.md                            ← README geral do monorepo
