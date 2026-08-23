@@ -1,0 +1,48 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id String @id @default(cuid())
+  
+  email String @unique
+  password String
+  name String 
+
+  habits Habit[]
+}
+
+model Habit {
+  id String @id @default(cuid())
+  userId String
+  
+  name String 
+  description String?
+  
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  logs HabitLog[]
+}
+
+model HabitLog {
+  id String @id @default(uuid())
+  habitId String
+
+  date DateTime @db.Date
+  completed Boolean @default(true)
+
+  habit Habit @relation(fields: [habitId], references: [id], onDelete: Cascade)
+
+  @@unique([habitId, date])
+}
