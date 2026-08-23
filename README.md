@@ -36,7 +36,7 @@ Sugestão de estrutura do Claude:
 
 Fullstack_Project_HabitTracker/          ← raiz do monorepo (repo git)
 ├── apps/
-│   ├── habit_tracker/                   ← sua pasta atual, sem alterações internas
+│   ├── habit_tracker/                   ← Next.js (create-next-app), sem alterações internas
 │   │   ├── .next/
 │   │   ├── node_modules/
 │   │   ├── public/
@@ -52,7 +52,7 @@ Fullstack_Project_HabitTracker/          ← raiz do monorepo (repo git)
 │   │   ├── tsconfig.json
 │   │   └── README.md
 │   │
-│   └── habit_tracker_api/               ← novo, Express
+│   └── habit_tracker_api/               ← Express
 │       ├── src/
 │       │   ├── routes/
 │       │   ├── controllers/
@@ -74,7 +74,7 @@ Fullstack_Project_HabitTracker/          ← raiz do monorepo (repo git)
 │       │   └── types/
 │       └── package.json
 │
-├── package.json                         ← root, com workspaces
+├── package.json                         ← root, com "workspaces"
 ├── tsconfig.base.json
 ├── LICENSE
 └── README.md                            ← README geral do monorepo

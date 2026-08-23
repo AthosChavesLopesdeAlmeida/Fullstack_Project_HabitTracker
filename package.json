@@ -1,0 +1,26 @@
+{
+  "name": "fullstack_project_habittracker",
+  "version": "1.0.0",
+  "description": "Este projeto consiste em uma aplicação que ajuda o usuário a manter controle sobre determinados hábitos que ele estabelece.",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev:web": "npm run dev -w apps/habit_tracker",
+    "dev:api": "npm run dev -w apps/habit_tracker_api",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AthosChavesLopesdeAlmeida/Fullstack_Project_HabitTracker.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AthosChavesLopesdeAlmeida/Fullstack_Project_HabitTracker/issues"
+  },
+  "homepage": "https://github.com/AthosChavesLopesdeAlmeida/Fullstack_Project_HabitTracker#readme"
+}
