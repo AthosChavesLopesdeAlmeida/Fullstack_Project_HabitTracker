@@ -4,8 +4,8 @@ import { requireAuth } from '../middlewares/auth.middleware';
 
 const router = Router()
 
-router.post('/habits', habitController.create)
-router.get('/habits', habitController.list)
-router.delete('/habits', habitController.delete)
+router.post('/create', requireAuth, habitController.create)
+router.get('/fetch', requireAuth, habitController.list)
+router.delete('/delete', requireAuth, habitController.delete)
 
 export default router

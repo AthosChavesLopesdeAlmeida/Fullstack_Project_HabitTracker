@@ -5,7 +5,7 @@ export const habitController = {
     async create (req: Request, res: Response) {
         try {
             const userId = req.userId!
-            const { name, description } = req.body
+            const { description, name } = req.body
             
             const habit = await habitService.create(userId, name, description)
             res.status(201).json(habit)
@@ -15,9 +15,13 @@ export const habitController = {
     },
 
     async list (req: Request, res: Response) {
-        const userId = req.userId!
-        const habits = await habitService.findByAllByUser(userId)
-        res.status(201).json(habits)        
+        try {
+            const userId = req.userId!
+            const habits = await habitService.findByAllByUser(userId)
+            res.status(200).json(habits)        
+        } catch (err) {
+            res.status(400).json({ error: (err as Error).message })
+        }
     },
 
     async delete (req: Request, res: Response) {
