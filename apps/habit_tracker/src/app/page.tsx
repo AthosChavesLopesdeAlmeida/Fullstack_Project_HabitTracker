@@ -1,10 +1,12 @@
 'use client'
+import React from 'react';
 import { api } from "@/lib/api";
 import { ApiError } from "@/lib/api";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Habit } from '../../../../packages/types/habit'
 import { toActivityCalendarData } from '../../../../packages/functions/toActivityData'
+import { toggleHabitLog } from "@/lib/toggleHabitLog";
 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -54,8 +56,9 @@ export default function Home() {
     try {
       await api('/habits/create', {
         method: 'POST',
-        body: { habitName, habitDescription }
+        body: { name: habitName, description: habitDescription }
       })
+      
       setIsCreationFormOpen(false)
       setHabitDescription('')
       setHabitName('')
@@ -110,6 +113,24 @@ export default function Home() {
     }
   }
 
+  const handleToggleDay = async (habit: Habit, date: string) => {
+    setError('')
+
+    const log = habit.logs.find((l) => l.date.split('T')[0] === date)
+    const currentlyCompleted = log?.completed ?? false
+
+    try {
+      await toggleHabitLog(habit.id, date, currentlyCompleted)
+      await fetchHabits() // recarrega pra refletir a mudança
+    } catch (err) {
+      if (err instanceof ApiError) {
+        setError(err.message);
+      } else {
+        setError('Connection was not possible');
+      }
+    }
+  }
+
   useEffect(() => {
     fetchHabits()
   }, [])
@@ -130,7 +151,7 @@ export default function Home() {
         </div>
       </header>
 
-      <main className="grid gird-col-1 gap-10">
+      <main className="grid gird-col-1 gap-10 justify-items-center pt-20">
 
         <Dialog open={isCreationFormOpen} onOpenChange={setIsCreationFormOpen}>
           <DialogContent>
@@ -161,22 +182,29 @@ export default function Home() {
 
         {isLoading && <h1 className="">Loading...</h1>}
 
-        {habits && <h1 className="text-5xl">You have not created any habits! Create one using the button on the header</h1>}
+        {!habits && <h1 className="text-5xl w-300 text-center">You have not created any habits! Create one using the button on the header</h1>}
 
         {habits?.map((habit: Habit) => (
           <Card key={habit.id}>
             <CardHeader>
               <CardTitle>{habit.name}</CardTitle>
-              <CardDescription>Criado em: {new Date(habit.createdAt).toLocaleDateString()}</CardDescription>
+              <CardDescription>Created at: {new Date(habit.createdAt).toLocaleDateString()}</CardDescription>
             </CardHeader>
 
             <CardContent>
-              <ActivityCalendar data={toActivityCalendarData(habit.logs)}/>
+              <ActivityCalendar
+                data={toActivityCalendarData(habit.logs)}
+                renderBlock={(block, activity) =>
+                  React.cloneElement(block, {
+                    onClick: () => handleToggleDay(habit, activity.date),
+                  })
+                }
+              />
             </CardContent>
 
             <CardFooter className="grid gird-col-1 gap-6">
               <CardDescription>{habit.description}</CardDescription>
-              <Button variant={"destructive"} onClick={() => deleteHabit(habit.id)}><Trash2 className="w-4 h-4 mr-2"/> Delete habit</Button>
+              <Button variant={"destructive"} onClick={() => deleteHabit(habit.id)} className="w-80 cursor-pointer"><Trash2 className="w-4 h-4 mr-2"/> Delete habit</Button>
             </CardFooter>
           </Card>
         ))}

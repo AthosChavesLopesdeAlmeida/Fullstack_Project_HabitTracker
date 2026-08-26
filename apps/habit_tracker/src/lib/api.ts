@@ -3,7 +3,6 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL;
 type ApiOptions = {
   method?: 'GET' | 'POST' | 'PUT' | 'DELETE';
   body?: unknown;
-  token?: string;
 };
 
 type ApiResponse<T> = {
@@ -12,11 +11,13 @@ type ApiResponse<T> = {
 };
 
 export async function api<T = unknown>(path: string, options: ApiOptions = {}): Promise<ApiResponse<T>> {
+  const token = localStorage.getItem('token');
+
   const res = await fetch(`${API_URL}${path}`, {
     method: options.method ?? 'GET',
     headers: {
       'Content-Type': 'application/json',
-      ...(options.token ? { Authorization: `Bearer ${options.token}` } : {}),
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
     },
     body: options.body ? JSON.stringify(options.body) : undefined,
   });

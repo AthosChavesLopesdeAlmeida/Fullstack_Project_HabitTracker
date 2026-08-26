@@ -7,7 +7,7 @@ export const habitController = {
             const userId = req.userId!
             const { description, name } = req.body
             
-            const habit = await habitService.create(userId, name, description)
+            const habit = await habitService.create(name, description, userId)
             res.status(201).json(habit)
         } catch (err) {
             res.status(400).json({ error: (err as Error).message })

@@ -1,11 +1,11 @@
 import { habitRepository } from '../repositories/habit.repository';
 
 export const habitService = {
-    create (userId: string, description: string, name: string) {
+    create (name: string, description: string, userId: string) {
         if (!userId) throw new Error('User not found')
         if (!name) throw new Error('The name of the habit is required')
         
-        return habitRepository.create(userId, description, name)
+        return habitRepository.create(name, description, userId)
     },
     delete (id: string) {
         if (!id) throw new Error('Habit not found')
