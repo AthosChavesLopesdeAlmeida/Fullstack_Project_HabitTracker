@@ -25,5 +25,15 @@ export const authService = {
             
         const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: '7d' });
         return { user: { id: user.id, name: user.name, email: user.email }, token }
+    },
+
+    async deleteAccount (userId: string, password: string) {
+        const user = await userRepository.findById(userId)
+        if (!user) throw new Error('User not found')
+
+        const isPasswordValid = await bcrypt.compare(password, user.password)
+        if(!isPasswordValid) throw new Error('Invalid password')
+        
+        await userRepository.delete(userId)
     }
 }

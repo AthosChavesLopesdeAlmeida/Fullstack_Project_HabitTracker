@@ -20,5 +20,16 @@ export const authController = {
         } catch (err) {
             res.status(400).json({ error: (err as Error).message })
         }
+    },
+
+    async deleteAccount (req: Request, res: Response) {
+        try {
+            const userId = req.userId!
+            const { password } = req.body
+            await authService.deleteAccount(userId, password)
+            res.status(200).json({ success: true })
+        } catch (err) {
+            res.status(400).json({ error: (err as Error).message })
+        }
     }
 }

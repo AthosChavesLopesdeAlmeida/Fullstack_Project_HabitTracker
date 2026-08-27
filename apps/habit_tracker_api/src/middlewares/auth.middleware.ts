@@ -1,16 +1,9 @@
+// src/middlewares/auth.middleware.ts
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 
 interface JwtPayload {
   userId: string;
-}
-
-declare global {
-  namespace Express {
-    interface Request {
-      userId?: string;
-    }
-  }
 }
 
 export function requireAuth(req: Request, res: Response, next: NextFunction) {

@@ -37,6 +37,7 @@ import {
 
 export default function Home() {
   const [isCreationFormOpen, setIsCreationFormOpen] = useState(false)
+  const [isDeleteAccountDialogOpen, setIsDeleteAccountDialogOpen] = useState(false)
 
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
@@ -44,9 +45,33 @@ export default function Home() {
   const [habitName, setHabitName] = useState('')
   const [habitDescription, setHabitDescription] = useState('')
 
+  const [deletingPassword, setDeletingPassword] = useState('')
+
   const [habits, setHabits] = useState<Habit[]>()  
 
   const router = useRouter()
+
+  const handleLogout = () => {
+    localStorage.removeItem('token')
+    router.push('/login')
+  }
+
+  const handleDeleteAccount = async () => {
+    try {
+      await api('/auth/delete', {
+        method: 'DELETE',
+        body: { password: deletingPassword }
+      })
+      localStorage.removeItem('token')
+      router.push('/register')
+    } catch (err) {
+        if (err instanceof ApiError) {
+        setError(err.message);
+        } else {
+        setError('Connection was not possible');
+        }        
+    }
+  }
 
   const handleCreateHabit = async (e: React.SubmitEvent) => {
     e.preventDefault()
@@ -145,8 +170,8 @@ export default function Home() {
             <Plus className="w-4 h-4 mr-2" /> Start a new habit
           </Button>
           <ButtonGroup>
-            <Button variant={"destructive"} className="cursor-pointer">Delete account</Button>
-            <Button variant={"secondary"} className="cursor-pointer">Log out</Button>
+            <Button variant={"destructive"} className="cursor-pointer" onClick={() => setIsDeleteAccountDialogOpen(!isDeleteAccountDialogOpen)}>Delete account</Button>
+            <Button variant={"secondary"} className="cursor-pointer" onClick={handleLogout}>Log out</Button>
           </ButtonGroup>
         </div>
       </header>
@@ -180,9 +205,29 @@ export default function Home() {
           </DialogContent>
         </Dialog>
 
-        {isLoading && <h1 className="">Loading...</h1>}
+        <Dialog open={isDeleteAccountDialogOpen} onOpenChange={setIsDeleteAccountDialogOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Delete your account</DialogTitle>
+              <DialogDescription>This action is irreversible. Confirm your password in order to delete your account</DialogDescription>
+            </DialogHeader>
 
-        {!habits && <h1 className="text-5xl w-300 text-center">You have not created any habits! Create one using the button on the header</h1>}
+            <div className='flex flex-col gap-4'>
+              <div className='gird gap-2'>
+                <Label htmlFor='delete-password'>Password</Label>
+                <Input onChange={(e) => setDeletingPassword(e.target.value)} value={deletingPassword} id='delete-password' required type='password'/>
+              </div>
+
+              { error && <p className="text-red-500 text-sm">{error}</p>}
+
+              <Button variant={'destructive'} onClick={handleDeleteAccount}>Confirm deletion</Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+
+        {isLoading && <h1 className="text-3xl">Loading...</h1>}
+
+        {habits?.length === 0 && <h1 className="text-5xl w-300 text-center">You have not created any habits! Create one using the button on the header</h1>}
 
         {habits?.map((habit: Habit) => (
           <Card key={habit.id}>
